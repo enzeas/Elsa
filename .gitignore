@@ -1,5 +1,4 @@
-
 *.pyc
-
-cookie.cfg
-db/zhihu.db
+*.cfg
+*.db
+*.log

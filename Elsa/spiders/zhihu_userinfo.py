@@ -39,15 +39,15 @@ class ZhihuSpider(scrapy.Spider):
                 if 'followingCount' not in info:
                     return
                 # TODO(enzo): catch exception
-                self.update_user_info(_name, info)
-                self.update_user_count(info)
+                self.save_user_info(_name, info)
+                self.save_user_count(info)
                 continue
             #print(_name, info)
-            self.update_user_info(_name, info)
-            self.update_user_count(info)
+            self.save_user_info(_name, info)
+            self.save_user_count(info)
             following_id = info['id']
             following_name = info['name']
-            self.db.update_user_following(id=_user_id, name=_user_name, following_id=following_id, following_name=following_name)
+            self.db.update_table("UserFollowing",user_id=_user_id, following_id=following_id)
             if self.check_scrapy_condition(info):
                 to_scrapy_name.append(_name)
         if 'page' in response.url:
@@ -69,10 +69,10 @@ class ZhihuSpider(scrapy.Spider):
                 return True
         return False
 
-    def update_user_info(self, _name, info):
+    def save_user_info(self, _name, info):
         print(info)
-        id = info['id']
-        name = _name
+        user_id = info['id']
+        user_name = _name
         nick_name = info['name']
         avatar_url = info['avatarUrl']
         avatar_url_template = info['avatarUrlTemplate']
@@ -87,13 +87,13 @@ class ZhihuSpider(scrapy.Spider):
         type = info['type']
         url = info['url']
         url_token = info['urlToken']
-        self.db.update_user_info(id=id, name=name, nick_name=nick_name,
+        self.db.update_table("UserInfo", user_id=user_id, user_name=user_name, nick_name=nick_name,
             avatar_url=avatar_url, avatar_url_template=avatar_url_template,
             headline=headline, user_type=user_type, business=business, educations=educations, employments=employments,
             locations=locations, gender=gender, description=description, type=type, url=url, url_token=url_token)
 
-    def update_user_count(self, info):
-        id = info['id']
+    def save_user_count(self, info):
+        user_id = info['id']
         answer_count = info['answerCount']
         question_count = info.get('questionCount', 0)
         articles_count = info.get('articlesCount', 0)
@@ -120,12 +120,22 @@ class ZhihuSpider(scrapy.Spider):
         thank_to_count = info.get('thankToCount', 0)
         vote_from_count = info.get('voteFromCount', 0)
         vote_to_count = info.get('voteToCount', 0)
-        self.db.update_user_count(id, answer_count, question_count,
-            articles_count, columns_count, pins_count, favorite_count,
-            voteup_count, thanked_count, favorited_count, logs_count,
-            following_count, follower_count, participated_live_count,
-            following_columns_count,following_favlists_count,
-            following_question_count, following_topic_count,
-            commercial_question_count, hosted_live_count,
-            included_answers_count, included_articles_count, mutual_followees_count,
-            thank_from_count, thank_to_count, vote_from_count, vote_to_count)
+        self.db.update_table("UserCount", user_id=user_id,
+            answer_count=answer_count, question_count=question_count,
+            articles_count=articles_count, columns_count=columns_count,
+            pins_count=pins_count, favorite_count=favorite_count,
+            voteup_count=voteup_count, thanked_count=thanked_count,
+            favorited_count=favorited_count, logs_count=logs_count,
+            following_count=following_count, follower_count=follower_count,
+            participated_live_count=participated_live_count,
+            following_columns_count=following_columns_count,
+            following_favlists_count=following_favlists_count,
+            following_question_count=following_question_count,
+            following_topic_count=following_topic_count,
+            commercial_question_count=commercial_question_count,
+            hosted_live_count=hosted_live_count,
+            included_answers_count=included_answers_count,
+            included_articles_count=included_articles_count,
+            mutual_followees_count=mutual_followees_count,
+            thank_from_count=thank_from_count, thank_to_count=thank_to_count,
+            vote_from_count=vote_from_count, vote_to_count=vote_to_count)

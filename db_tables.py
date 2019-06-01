@@ -76,17 +76,88 @@ class UserCount(Base):
 
 class UserFollowing(Base):
     __tablename__ = 'UserFollowing'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(String(32), default='')
-    user_name = Column(String(32), default='')
-    following_id = Column(String(32), default='')
-    following_name = Column(String(32), default='')
+    user_id = Column(String(32), default='', primary_key=True)
+    following_id = Column(String(32), default='', primary_key=True)
 
     def __repr__(self):
-        return ("UserFollowing(user_id='%s', user_name='%s', "
-                "following_id='%s', following_name='%s')" % (
-                self.user_id, self.user_name,
-                self.following_id, self.following_name))
+        return "UserFollowing(user_id='%s', following_id='%s')" % (
+                self.user_id, self.following_id)
+
+class HotQuestion(Base):
+    __tablename__ = 'HotQuestion'
+    hash_id = Column(Integer, primary_key=True, autoincrement=True)
+    title = Column(String(256), default='')
+    link = Column(String(256), default='')
+    metrics = Column(String(32), default='')
+    excerpt = Column(String(2048), default='')
+    image = Column(String(256), default='')
+    hot_time = Column(Integer, default=0)
+
+    def __repr__(self):
+        return ("HotQuestion(title='%s', link='%s', metrics='%s', "
+                "hot_time='%d')"% (
+                self.title, self.link, self.metrics, self.hot_time))
+
+class QuestionInfo(Base):
+    __tablename__ = 'QuestionInfo'
+    question_id = Column(Integer, default=0, primary_key=True)
+    title = Column(String(256), default='')
+    url = Column(String(256), default='')
+    author_id = Column(String(32), default='')
+    answer_count = Column(Integer, default=0)
+    visit_count = Column(Integer, default=0)
+    comment_count = Column(Integer, default=0)
+    follower_count = Column(Integer, default=0)
+    created_time = Column(Integer, default=0)
+    updated_time = Column(Integer, default=0)
+    excerpt = Column(String(), default='')
+    detail = Column(String(), default='')
+    topics = Column(String(256), default='')
+
+    def __repr__(self):
+        return ("QuestionInfo(id='%d', url='%s', "
+                "author_id='%s', title='%s', topics='%s'" % (
+                self.id, self.url,
+                self.author_id, self.title, self.topics))
+
+class AnswerInfo(Base):
+    __tablename__ = 'AnswerInfo'
+    answer_id = Column(Integer, default=0, primary_key=True)
+    content = Column(String(256), default='')
+    url = Column(String(256), default='')
+    question_id = Column(Integer, default=0)
+    author_id = Column(String(32), default='')
+    created_time = Column(Integer, default=0)
+    updated_time = Column(Integer, default=0)
+    voteup_count = Column(Integer, default=0)
+    comment_count = Column(Integer, default=0)
+
+    def __repr__(self):
+        return ("AnswerInfo(id='%d', url='%s', question_id='%d', "
+                "author_id='%s', content='%s')" % (
+                self.id, self.url, self.question_id,
+                self.author_id, self.content))
+
+class CommentInfo(Base):
+    __tablename__ = 'CommentInfo'
+    comment_id = Column(Integer, default=0, primary_key=True)
+    content = Column(String(256), default='')
+    url = Column(String(256), default='')
+    author_id = Column(String(32), default='')
+    answer_id = Column(Integer, default=0)
+    created_time = Column(Integer, default=0)
+    vote_count = Column(Integer, default=0)
+    child_comment_count = Column(Integer, default=0)
+
+class ChildCommentInfo(Base):
+    __tablename__ = 'ChildCommentInfo'
+    child_comment_id = Column(Integer, default=0, primary_key=True)
+    content = Column(String(256), default='')
+    author_id = Column(String(32), default='')
+    reply_to_author_id = Column(String(32), default='')
+    created_time = Column(Integer, default=0)
+    vote_count = Column(Integer, default=0)
+    replies_count = Column(Integer, default=0)
 
 
 def init_db():
